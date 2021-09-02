@@ -5,14 +5,14 @@ using UnityEngine;
 public class turretProjectile : MonoBehaviour // defining the positions where we will spawns our projectiles
 {
 
-    [SerializeField] private Transform projectileSpawnPosition;
-    [SerializeField] private float delayBetweenAttacks= 2f;
+    [SerializeField] protected Transform projectileSpawnPosition;
+    [SerializeField] protected float delayBetweenAttacks= 2f;
 
 
-    private float nextAttackTime;
-    private ObjectPooler pooler;
+    protected float nextAttackTime;
+    protected ObjectPooler pooler;
     private Projectile currentProjectileLoaded;
-    private Turret turret;
+    protected Turret turret;
 
     private void Start()
     {
@@ -22,7 +22,7 @@ public class turretProjectile : MonoBehaviour // defining the positions where we
         loadProjectile();
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         /*
         if (Input.GetKeyDown(KeyCode.K))
@@ -59,7 +59,7 @@ public class turretProjectile : MonoBehaviour // defining the positions where we
             return false;
     }
 
-    private void loadProjectile() // assume that we have a full of projectiles to create the logic of loading a new projectile
+    protected virtual void loadProjectile() // assume that we have a full of projectiles to create the logic of loading a new projectile
     {
         GameObject newProjectile = pooler.GetInstanceFromPool();
         newProjectile.transform.localPosition = projectileSpawnPosition.position;

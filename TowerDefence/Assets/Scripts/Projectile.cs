@@ -5,19 +5,20 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    [SerializeField] private float moveSpeedOfProjectile = 10f;
-    [SerializeField] private float damage = 2f;
-    [SerializeField] private float minimumDistanceToDamage = 0.1f;
+    //protected for using them in child classes lie machineProjectile
+    [SerializeField] protected float moveSpeedOfProjectile = 10f; 
+    [SerializeField] protected float damage = 2f;
+    [SerializeField] protected float minimumDistanceToDamage = 0.1f;
 
     public turretProjectile turretOwner { get; set; } // every projectile has an turretOwner in the type of turretProjectile and
 
-    private Enemy enemyTarget;
+    protected Enemy enemyTarget;
 
     //enemyFX subscribed to it
     public static Action<Enemy, float> onEnemyHitAnim; //which enemy is colliding with projectile thats why <enemy> and amount of damage <float>
 
 
-    private void Update()
+    protected virtual void Update()
     {
         if (enemyTarget != null) // if we have an enemy to attack, which is inside of turret's sphere rigidbody, certain seconds after the last send missile
         {
@@ -26,10 +27,10 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    
 
 
-    private void moveProjectile() // going to be called in update, as long as projectile has an enemy target
+
+    protected virtual void moveProjectile() // going to be called in update, as long as projectile has an enemy target
     {
         transform.position = Vector2.MoveTowards(transform.position, enemyTarget.transform.position, moveSpeedOfProjectile * Time.deltaTime);
         float distanceToTarget = (enemyTarget.transform.position - transform.position).magnitude;

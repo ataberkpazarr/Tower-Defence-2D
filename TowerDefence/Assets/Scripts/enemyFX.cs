@@ -32,7 +32,7 @@ public class enemyFX : MonoBehaviour
         //we need to check if the enemy that has been collidied with the projectile, is the same enemy where this class is attached to 
         if (en == enemy)
         {
-            GameObject dmgTextSingleton = damageTextManager.instance.pooler.GetInstanceFromPool();
+            GameObject dmgTextSingleton = damageTextManager.Instance.pooler.GetInstanceFromPool();
             TextMeshProUGUI damageText = dmgTextSingleton.GetComponent<damageText>().damageTextTMP;
             damageText.text = damage.ToString();
 

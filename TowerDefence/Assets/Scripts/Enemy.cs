@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿  using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -18,8 +18,10 @@ public class Enemy : MonoBehaviour
     private int nextWayPointIndex;
     private Vector3 lastVisitedPointPosition; //storing last passed point position of path, in order to decide to the rotation of enemy
     private enemyHealth enemyHealth_;
-    private SpriteRenderer spriteRenderer; 
-  
+    private SpriteRenderer spriteRenderer;
+
+    public enemyHealth EnemyHealth { get; set; }
+
     public Vector3 currentNextPositionCasted => waypoint.GetWaypointPosition(nextWayPointIndex);
 
     
@@ -30,6 +32,7 @@ public class Enemy : MonoBehaviour
         MoveSpeed = moveSpeed;
         enemyHealth_ = GetComponent<enemyHealth>();
         lastVisitedPointPosition = transform.position;
+        EnemyHealth = GetComponent<enemyHealth>();
 
     }
     private void Update()

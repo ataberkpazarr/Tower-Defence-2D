@@ -64,7 +64,7 @@ public class turretProjectile : MonoBehaviour // defining the positions where we
         GameObject newProjectile = pooler.GetInstanceFromPool();
         newProjectile.transform.localPosition = projectileSpawnPosition.position;
         newProjectile.transform.SetParent(projectileSpawnPosition); // it needs parent the turret for the following the turret rotation, while moving
-        currentProjectileLoaded = newProjectile.GetComponent<Projectile>(); //now we have a reference of the current projectile that we have loaded
+        currentProjectileLoaded = newProjectile.GetComponent<Projectile>(); //now we have a reference of the current projectile that we have loaded also it means that turret is not empty anymore
         currentProjectileLoaded.turretOwner = this; // there is an owner of projectile and it has get set properties in the projectile class so projectile object has an owner in type of turretProjectile 
         currentProjectileLoaded.resetProjectile();
         newProjectile.SetActive(true);

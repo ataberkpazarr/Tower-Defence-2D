@@ -7,8 +7,10 @@ public class Projectile : MonoBehaviour
 {
     //protected for using them in child classes lie machineProjectile
     [SerializeField] protected float moveSpeedOfProjectile = 10f; 
-    [SerializeField] protected float damage = 2f;
+    ///[SerializeField] protected float damage = 2f; erased // it is being converted to below damage
     [SerializeField] protected float minimumDistanceToDamage = 0.1f;
+
+    public float damage { get; set; } // it will be going to be determined when we load a new projectile. It will be determined by turretProjectile class
 
     public turretProjectile turretOwner { get; set; } // every projectile has an turretOwner in the type of turretProjectile and
 

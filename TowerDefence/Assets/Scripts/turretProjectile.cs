@@ -7,6 +7,11 @@ public class turretProjectile : MonoBehaviour // defining the positions where we
 
     [SerializeField] protected Transform projectileSpawnPosition;
     [SerializeField] protected float delayBetweenAttacks= 2f;
+    [SerializeField] protected float damage = 2f;
+
+
+    public float Damage { get; set; }
+    public float delayAfterShot { get; set; }
 
 
     protected float nextAttackTime;
@@ -16,9 +21,10 @@ public class turretProjectile : MonoBehaviour // defining the positions where we
 
     private void Start()
     {
-
+        Damage = damage; //initalized by default value but can be changed by outer classes since it is public   
         pooler = GetComponent<ObjectPooler>();
         turret = GetComponent<Turret>();
+        delayAfterShot = delayBetweenAttacks;
         loadProjectile();
     }
 
@@ -45,7 +51,7 @@ public class turretProjectile : MonoBehaviour // defining the positions where we
                 currentProjectileLoaded.setEnemy(turret.currentEnemyTarget);
             }
 
-            nextAttackTime = Time.time + delayBetweenAttacks;
+            nextAttackTime = Time.time + delayAfterShot;
         }
 
         
@@ -67,6 +73,7 @@ public class turretProjectile : MonoBehaviour // defining the positions where we
         currentProjectileLoaded = newProjectile.GetComponent<Projectile>(); //now we have a reference of the current projectile that we have loaded also it means that turret is not empty anymore
         currentProjectileLoaded.turretOwner = this; // there is an owner of projectile and it has get set properties in the projectile class so projectile object has an owner in type of turretProjectile 
         currentProjectileLoaded.resetProjectile();
+        currentProjectileLoaded.damage = Damage; // this projectile's damage is being determined 
         newProjectile.SetActive(true);
  
     }

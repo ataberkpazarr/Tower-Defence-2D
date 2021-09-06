@@ -6,14 +6,14 @@ public class machineProjectile : Projectile
 {
 
     public Vector2 direction { get; set; } //for storing the direction
-    protected virtual void Update()
+    override protected  void Update() //virutal dı
     {
         
             moveProjectile();
         
     }
 
-    protected virtual void moveProjectile() //moving behaviour will be different
+    override protected  void moveProjectile() //moving behaviour will be different
     {
 
         Vector2 movement = direction.normalized * moveSpeedOfProjectile * Time.deltaTime;
@@ -33,6 +33,10 @@ public class machineProjectile : Projectile
 
             if (en.EnemyHealth.getCurrentHealth()>0) //if enemy has health
             {
+                if (onEnemyHitAnim!=null)
+                {
+                    onEnemyHitAnim.Invoke(en, damage);
+                }
                 en.EnemyHealth.dealDamage(damage); //damage variable comes from parent projectile class 
 
             }

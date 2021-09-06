@@ -5,7 +5,7 @@ using UnityEngine;
 public class machineTurretProjectile : turretProjectile
 {
 
-    protected virtual void Update()
+    protected override void Update()
     {
         if (Time.time > nextAttackTime)
         {
@@ -31,6 +31,7 @@ public class machineTurretProjectile : turretProjectile
 
         machineProjectile projectile = ins.GetComponent<machineProjectile>();
         projectile.direction = dir;
+        projectile.damage = Damage; //Right Damage is the Damage of turretProjectile which is parent class of this
         ins.SetActive(true);
     }
 

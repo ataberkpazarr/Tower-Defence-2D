@@ -12,19 +12,11 @@ public class Waypoint : MonoBehaviour //VEctor 3 positions in space
     public Vector3[] Points =>points; // private points maden reachable by outside of this class
     public Vector3 currentPosition => _currentPosition; // private currentposition maden reachable by outside of this class
 
-
-
     // Start is called before the first frame update
     void Start()
     {
         _gameStarted = true;
         _currentPosition = transform.position;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     private void OnDrawGizmos() // a line should be drawn by one position to next position in path, except the last position since it will not have a next position 
@@ -45,8 +37,6 @@ public class Waypoint : MonoBehaviour //VEctor 3 positions in space
                     Gizmos.DrawLine(points[i] + _currentPosition, points[i + 1]+ _currentPosition);
                 }
         }
-        
-        
     }
 
     public Vector3 GetWaypointPosition(int index) // returning the index certain waypoint which corresponds to next position in enemy's movement

@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Turret : MonoBehaviour
 {
+    public turretUpgrade turretUpgrade { get; set; } // turret should know which level it is
     [SerializeField] private float attackRange = 3f;
+
+    public float AttackRange => attackRange;
 
     private bool gameStarted;
 
@@ -16,6 +19,7 @@ public class Turret : MonoBehaviour
     {
         gameStarted = true;
         enemyList = new List<Enemy>();
+        turretUpgrade = GetComponent<turretUpgrade>(); 
     }
 
     private void Update()

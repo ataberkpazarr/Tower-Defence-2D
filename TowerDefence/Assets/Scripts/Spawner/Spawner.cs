@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 public enum spawnModes 
 {
     Fixed,
@@ -9,6 +9,8 @@ public enum spawnModes
 }
 public class Spawner : MonoBehaviour
 {
+    public static Action onWaveCompleted;
+
     [Header("Settings")]
     [SerializeField] private spawnModes spawnMode;
     //[SerializeField] private GameObject testGameOb;
@@ -23,16 +25,24 @@ public class Spawner : MonoBehaviour
     [SerializeField] private float minRandomDelay;
     [SerializeField] private float maxRandomDelay;
 
+    [Header("Poolers")]
+    [SerializeField] private ObjectPooler enemyWave10Pooler;
+    [SerializeField] private ObjectPooler enemyWave11to20Pooler;
+    [SerializeField] private ObjectPooler enemyWave21to30Pooler;
+    [SerializeField] private ObjectPooler enemyWave31to40Pooler;
+    [SerializeField] private ObjectPooler enemyWave41to50Pooler;
+
+
     private float spawnTimer;
     private int enemiesSpawned;
 
-    private ObjectPooler pooler;
+    //private ObjectPooler pooler;
     private Waypoint wayp;
     private int remainingEnemies;
 
     private void Start()
     {
-        pooler = GetComponent<ObjectPooler>();
+        //pooler = GetComponent<ObjectPooler>();
         wayp = GetComponent<Waypoint>();
         remainingEnemies = enemyCount;
 
@@ -53,11 +63,42 @@ public class Spawner : MonoBehaviour
         }
     }
 
+    private ObjectPooler getPooler()
+    {
+        int currentWave = levelManager.Instance.currentWave;
+        if (currentWave <=10)
+        {
+            return enemyWave10Pooler;
+        }
+       else  if (currentWave > 10 && currentWave <= 20)
+        {
+            return enemyWave11to20Pooler;
+        }
+       else  if (currentWave > 20 && currentWave <= 30)
+        {
+            return enemyWave21to30Pooler;
+        }
+       else  if (currentWave > 30 && currentWave <= 40)
+        {
+            return enemyWave31to40Pooler;
+        }
+        else if (currentWave > 40 && currentWave <= 50)
+        {
+            return enemyWave41to50Pooler;
+        }
+        return null;
+    }
+
     private void enemyReachedEndorKilled(Enemy en)
     {
         remainingEnemies--;//whenever final position is reached by an enemy, decrease total remainings
         if (remainingEnemies <=0) // we need to start a new wave and since we have a delay between the waves, we need to use coroutine
         {
+            if (onWaveCompleted!=null)
+            {
+                onWaveCompleted.Invoke();
+
+            }
             StartCoroutine(nextWave()); 
         }
 
@@ -99,7 +140,7 @@ public class Spawner : MonoBehaviour
     }
     private void spawnEnemy()
     {
-        GameObject newInstance = pooler.GetInstanceFromPool();
+        GameObject newInstance = getPooler().GetInstanceFromPool(); // get the 
         //Instantiate(newInstance, transform.position,Quaternion.identity);
         Enemy enemy = newInstance.GetComponent<Enemy>();
         //Waypoint w = new Waypoint();
@@ -112,7 +153,7 @@ public class Spawner : MonoBehaviour
     private float GetRandomDelay()
    {
 
-        float randomTimer = Random.Range(minRandomDelay,maxRandomDelay);
+        float randomTimer = UnityEngine.Random.Range(minRandomDelay,maxRandomDelay);
         return randomTimer;
    }
 

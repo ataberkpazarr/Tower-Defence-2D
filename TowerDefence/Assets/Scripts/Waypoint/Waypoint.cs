@@ -5,12 +5,16 @@ using UnityEngine;
 public class Waypoint : MonoBehaviour //VEctor 3 positions in space
 {
     [SerializeField] private Vector3[] points;
+    [SerializeField] private GameObject enemySpawnPos;
+
 
     private Vector3 _currentPosition; // store the current position of our waypoint game object
     private bool _gameStarted; // if we are in play mode or not
 
     public Vector3[] Points =>points; // private points maden reachable by outside of this class
     public Vector3 currentPosition => _currentPosition; // private currentposition maden reachable by outside of this class
+
+
 
     // Start is called before the first frame update
     void Start()

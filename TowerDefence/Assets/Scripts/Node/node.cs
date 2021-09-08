@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine.UI;
 using System;
+using UnityEngine;
 
 public class node : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class node : MonoBehaviour
     public Turret turretToPlace { get; set; }
 
     [SerializeField] private GameObject attackRangeSprite;
+    [SerializeField] private Text levelText;
 
     private float rangeSize;
     private Vector3 rangeOriginalSize;
@@ -22,17 +24,51 @@ public class node : MonoBehaviour
         rangeSize = attackRangeSprite.GetComponent<SpriteRenderer>().bounds.size.y; // reaching its range 
         rangeOriginalSize = attackRangeSprite.transform.localScale;
         
+
     }
+    /*
+    private void OnGUI()
+    {
+        GUI.Label(new Rect(transform.position.x + 100, transform.position.y + 200, 20, 20), "Level " + turretToPlace.turretUpgrade.level.ToString(), levelStyle);
+
+
+    }*/
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (turretToPlace != null)
+        {
+            try
+            {
+                levelText.text  = " Level " + turretToPlace.turretUpgrade.level.ToString();
+            }
+            catch 
+            {
+            
+            }
+            
+            
+
+            //updateLevelText
+
+        }
+        else if(levelText.gameObject.activeInHierarchy)
+        {
+            levelText.gameObject.SetActive(false);
+        }
+
+    }
+
+    private void updateLevelText()
+    {
     }
 
     public void setTurret(Turret tur)
     {
         turretToPlace = tur;
+        levelText.gameObject.SetActive(true); // when turret is placed, then we also need to show level text of it
+
     }
 
     public bool IsEmpty() // if the node is empty or not

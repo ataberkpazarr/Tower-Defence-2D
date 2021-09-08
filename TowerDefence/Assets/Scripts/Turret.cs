@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Turret : MonoBehaviour
 {
+    
     public turretUpgrade turretUpgrade { get; set; } // turret should know which level it is
     [SerializeField] private float attackRange = 3f;
 
@@ -15,11 +16,14 @@ public class Turret : MonoBehaviour
 
     public Enemy currentEnemyTarget { get; set; }
 
+    public bool selected { get; set; }
+
     private void Start()
     {
         gameStarted = true;
         enemyList = new List<Enemy>();
-        turretUpgrade = GetComponent<turretUpgrade>(); 
+        turretUpgrade = GetComponent<turretUpgrade>();
+        selected = false;
     }
 
     private void Update()
@@ -27,6 +31,8 @@ public class Turret : MonoBehaviour
         getCurrentEnemyTarget();
         rotateTurretTowardsTarget();
     }
+
+    
 
     private void rotateTurretTowardsTarget()
     {
@@ -57,8 +63,12 @@ public class Turret : MonoBehaviour
             GetComponent<CircleCollider2D>().radius=attackRange ;
 
         }
+        if (selected)
+        {
 
-        Gizmos.DrawWireSphere(transform.position,attackRange); // drawing attack range for the scene View
+
+            Gizmos.DrawWireSphere(transform.position, attackRange); // drawing attack range for the scene View
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision) // if enemy is in the range of our circle collider  

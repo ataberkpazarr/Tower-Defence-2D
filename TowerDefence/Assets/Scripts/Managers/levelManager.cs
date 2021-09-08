@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class levelManager : Singleton<levelManager>
 {
     [SerializeField] private int Lives; // 10 right now 
+
+    public static Action onGameOver;
 
     public int currentWave { get; set; }
 
@@ -36,7 +39,12 @@ public class levelManager : Singleton<levelManager>
 
     public void gameOver()
     {
+        if (onGameOver != null)
+        {
+            onGameOver.Invoke();
+        }
         UiManager.Instance.showGameOverPanel();
+        
     }
 
     private void reduceLives(Enemy en)

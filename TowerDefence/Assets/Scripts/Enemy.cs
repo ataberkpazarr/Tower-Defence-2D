@@ -45,7 +45,16 @@ public class Enemy : MonoBehaviour
             updateNextPointIndex();
         }
     }
+    /*
+    private void OnEnable()
+    {
+        levelManager.onGameOver += stopMovement;  //stop the movement when game is over
+    }
+    private void OnDisable()
+    {
+        levelManager.onGameOver -= stopMovement;
 
+    }*/
     public void stopMovement()
     {
         MoveSpeed = 0f;

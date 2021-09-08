@@ -35,6 +35,7 @@ public class Spawner : MonoBehaviour
 
     private float spawnTimer;
     private int enemiesSpawned;
+    bool gameIsOver = false;
 
     //private ObjectPooler pooler;
     private Waypoint wayp;
@@ -48,6 +49,14 @@ public class Spawner : MonoBehaviour
 
             
     }
+
+    
+
+    private void doNotSpawnEnemy()
+    {
+        gameIsOver = true;
+    }
+
 
     void Update()
     {
@@ -116,12 +125,15 @@ public class Spawner : MonoBehaviour
     {
         Enemy.onEndReach += enemyReachedEndorKilled; // onEndReach event should be listened and if an enemy reaches that position, remaining enemies should be decreased
         enemyHealth.onEnemyKilled += enemyReachedEndorKilled;
+        levelManager.onGameOver += doNotSpawnEnemy; // dont get active enemies when the game is over
     }
 
     private void OnDisable()
     {
         Enemy.onEndReach -= enemyReachedEndorKilled;
         enemyHealth.onEnemyKilled -= enemyReachedEndorKilled;
+        levelManager.onGameOver -= doNotSpawnEnemy;
+
     }
     private float getSpawnDelay()
     {
@@ -140,15 +152,20 @@ public class Spawner : MonoBehaviour
     }
     private void spawnEnemy()
     {
-        GameObject newInstance = getPooler().GetInstanceFromPool(); // get the 
-        //Instantiate(newInstance, transform.position,Quaternion.identity);
-        Enemy enemy = newInstance.GetComponent<Enemy>();
-        //Waypoint w = new Waypoint();
-        enemy.setWaypoint(wayp);
-        enemy.resetEnemy();
-        enemy.transform.localPosition = transform.position; // make newly spawned enemy's position to main-spawning positioin  
-        //newInstance.AddComponent<Enemy>();
-        newInstance.SetActive(true);
+        if (!gameIsOver)
+        {
+
+
+            GameObject newInstance = getPooler().GetInstanceFromPool(); // get the 
+                                                                        //Instantiate(newInstance, transform.position,Quaternion.identity);
+            Enemy enemy = newInstance.GetComponent<Enemy>();
+            //Waypoint w = new Waypoint();
+            enemy.setWaypoint(wayp);
+            enemy.resetEnemy();
+            enemy.transform.localPosition = transform.position; // make newly spawned enemy's position to main-spawning positioin  
+                                                                //newInstance.AddComponent<Enemy>();
+            newInstance.SetActive(true);
+        }
     }
     private float GetRandomDelay()
    {

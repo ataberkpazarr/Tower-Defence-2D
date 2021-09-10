@@ -16,17 +16,22 @@ public class waypointEditor : Editor //not inherited from monobehaviour
         {
             EditorGUI.BeginChangeCheck();
 
+
             // creating handles
             Vector3 currentWaypointPoint = waypoint.currentPosition + waypoint.Points[i]; // we have position of each point in our waypoint
             Vector3 newWayPointPoint = Handles.FreeMoveHandle(currentWaypointPoint, Quaternion.identity, 0.7f,new Vector3(0.3f,0.3f,0.3f), Handles.SphereHandleCap); //first parameter is the position where this handles will be spawn
 
+
             //creating label text for the points in our path 
+
             GUIStyle textStyle = new GUIStyle();
             textStyle.fontStyle = FontStyle.Bold;
             textStyle.fontSize = 16;
             textStyle.normal.textColor = Color.yellow;
             Vector3 textAlignment = Vector3.down * 0.35f + Vector3.right * 0.35f;
-            Handles.Label(waypoint.currentPosition +waypoint.Points[i]+textAlignment,$"{i+1}",textStyle); //position,
+            Handles.Label(waypoint.currentPosition +waypoint.Points[i]+textAlignment,$"{i+1}",textStyle); 
+
+
             bool changeHappened = EditorGUI.EndChangeCheck(); // if change happens
             
 

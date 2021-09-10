@@ -8,125 +8,116 @@ using System;
 
 public class UiManager : Singleton<UiManager>
 {
-    [Header("Panels")]
-    [SerializeField] private GameObject turretShopPanel; // need reference to our turretShopPanel
+    [Header("Panel")]
     [SerializeField] private GameObject nodeUiPanel;
-    [SerializeField] private GameObject upgradePanel;
-    [SerializeField] private GameObject gameOverPanel;
-    [SerializeField] private GameObject turretUpgradePanel;
-
 
     [Header("Text")]
     [SerializeField] private TextMeshProUGUI upgradeText;
-    [SerializeField] private TextMeshProUGUI sellText;
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private TextMeshProUGUI totalCoinText;
-    [SerializeField] private TextMeshProUGUI livesText;
+    [SerializeField] private TextMeshProUGUI totalKilledText;
     [SerializeField] private TextMeshProUGUI currentWaveText;
-    [SerializeField] private TextMeshProUGUI gameOverCoinsText;
 
-    public bool user_move_Enabled { get; set; }
 
+    public static Action<string> onLevelIncreased; // invoke it when level of Turret is increased
+    public int totalKilled { get; set; } 
     private node currentNodeSelected;
-    private bool lookingForMatchATurretToUpgrade =false;
-    public bool areWeInMatchPanel { get; set; }
-    
-    private node firstSelectedNode;
-    private node secondSelectedNode;
 
-    public static Action onUpgradePanel; 
+    public static Action onUpgradePanel; // when upgrade panel is opened
+    public static Action onTimeToRestartWave; // when player can not succeded the current Wave
 
+    System.Random rnd; //random initialization
+    private List<Enemy> activeEnemyList;  // store this wave's created enemies, until all are deactivated, do not restart or go next Wave
 
     private void Start()
     {
-        firstSelectedNode = null;
-        areWeInMatchPanel = false;
+        totalKilled = 0;
+        rnd = new System.Random();
+        activeEnemyList = new List<Enemy>();
     }
 
     private void Update()
     {
+        //update required texts in game scene
+        totalKilledText.text = totalKilled.ToString();
         totalCoinText.text = currencySystem.Instance.totalCoins.ToString();
-        livesText.text = levelManager.Instance.totalLives.ToString();
-        currentWaveText.text = "Wave " +levelManager.Instance.currentWave.ToString();
+        currentWaveText.text = "Wave " + levelManager.Instance.currentWave.ToString();
 
-        if (lookingForMatchATurretToUpgrade)
-        {
-
-        }
 
     }
+
     private void OnEnable()
     {
-        node.onNodeSelected += nodeSelected;
+        node.onNodeSelected += nodeSelected; // if a node is selected
+
     }
     private void OnDisable()
     {
         node.onNodeSelected -= nodeSelected;
 
     }
+ 
 
-    public void closeTurretShopPanel() // called when the turret is placed to the desired node 
+    public void destroyActiveEnemies()
     {
+        for (int i = 0; i < activeEnemyList.Count; i++)
+        {
 
-        turretShopPanel.SetActive(false);
-
+            if (activeEnemyList[i].gameObject.activeInHierarchy)
+            {
+                activeEnemyList[i].gameObject.SetActive(false);
+            }
+        }
+        activeEnemyList = new List<Enemy>();
+        
+    }
+    
+    public void addActiveEnemyList(Enemy en)
+    {
+        activeEnemyList.Add(en);
     }
 
-    public void closeTurretTurretUpgrade() // called when the turret is placed to the desired node 
-    {
-        turretShopManager.Instance.destroyClosedPanelItems();
 
-        turretUpgradePanel.SetActive(false);
-        firstSelectedNode = null;
+    public bool isThereAnyActiveEnemy() //in the scene
+    {
+            for (int i = 0; i < activeEnemyList.Count; i++)
+            {
+                
+                if (activeEnemyList[i].gameObject.activeInHierarchy)
+                {
+                    return true;
+                }
+            }
+            activeEnemyList = new List<Enemy>();
+            return false;
+        
     }
-    public void closeNodeUiPanel()
-    {
-        turretShopManager.Instance.destroyClosedPanelItems();
 
+    public void closeNodeUiPanel() //close the upgrade/destroy panel
+    {
         currentNodeSelected.closeAttackRangeSprite();
         nodeUiPanel.SetActive(false);
         currentNodeSelected.turretToPlace.selected = false;
     }
 
 
-    private void updateUpgradeText()
-    { 
-            upgradeText.text = currentNodeSelected.turretToPlace.turretUpgrade.upgradeCost.ToString();
-
-
-    }
-
-    private void updateTurretLevelText()
+    private void updateTurretLevelText() //the turret level text which locates in upgrade/destroy pop-up
     {
-        levelText.text = "Level" + currentNodeSelected.turretToPlace.turretUpgrade.level;
+        string key_ = nodeManager.Instance.getOrderNumberOfNode(currentNodeSelected).ToString();
+        string lev = PlayerPrefs.GetInt(key_).ToString();
+        levelText.text = "Level" + lev;
 
     }
     private void showNodeUI() // if current node selected is not null
     {
         nodeUiPanel.SetActive(true);
-        updateUpgradeText();
         updateTurretLevelText();
-        //updateSell();
+
 
 
     }
 
-    public void showGameOverPanel()
-    {
-        gameOverPanel.SetActive(true);
-        gameOverCoinsText.text = currencySystem.Instance.totalCoins.ToString();
-        
-    }
-    public void restartGame()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    public void showUpgradePanel() // onclick function of upgrade button which is permanent at view
-    {
-        upgradePanel.SetActive(true);
-    }
-    private bool checkIfEmptyExists()
+    private bool checkIfEmptyExists() // check if there exists an empty node
     {
         List<GameObject> nodeList_ = nodeManager.Instance.getNodeList();
         for (int i = 0; i < nodeList_.Count; i++)
@@ -143,32 +134,54 @@ public class UiManager : Singleton<UiManager>
     }
     public void onClickForSpawnTurret()
     {
-        List<GameObject> nodeList_ = nodeManager.Instance.getNodeList();
-        bool notFound = true;
-        while (notFound)
-        {
-            System.Random rnd = new System.Random();
-            int num = rnd.Next(0, 8);
-
-            node no = nodeList_[num].GetComponent<node>();
-            if (no.IsEmpty())
-            {
-                turretShopManager.Instance.spawnTurret(no);
-                notFound = false;
-            }
-            if (!checkIfEmptyExists())
-            {
-                notFound = false;
-            }
-        }
+        StartCoroutine(spawnTurretRoutine());
     }
 
+   
+
+IEnumerator spawnTurretRoutine()//spawn a turret on a node, randomly
+{
+        
+        yield return new WaitForSeconds(0.3f);
+        List<GameObject> nodeList_ = nodeManager.Instance.getNodeList();
+        bool notFound = true;
+        if (currencySystem.Instance.totalCoins >= currencySystem.Instance.amountForSpawningTurret) // if we have enough money to spawn a turret
+        {
+            while (notFound)
+            {
+
+                int num = rnd.Next(0, 10); // randomization
+                node no = nodeList_[num].GetComponent<node>();
+                
+                if (no.IsEmpty()) // if there is no turret on the node
+                {
+                    turretManager.Instance.spawnTurret(no);
+                    currencySystem.Instance.removeCoins(); // decrease total coins when a new turret spawned
+                    notFound = false;
+                }
+                if (!checkIfEmptyExists()) // if there is no empty location then dont look for an empty node
+                {
+                    notFound = false;
+                }
+            }
+        }
+
+    }
+    private bool checkIfLevelsMatch(node n1,node n2) //if two turret's levels are same or not
+    {
+        string key_1 = nodeManager.Instance.getOrderNumberOfNode(n1).ToString();
+        string key_2 = nodeManager.Instance.getOrderNumberOfNode(n2).ToString();
+
+        if (PlayerPrefs.GetInt(key_1) == PlayerPrefs.GetInt(key_2))
+        {
+            return true;
+        }
+        return false;
+
+    }
     public void onClickForUpgrade() //onclick of upgrade button which provide upgrade to turret
     {
-        if (onUpgradePanel!=null)
-        {
-            onUpgradePanel.Invoke();
-        }
+       
 
         List<GameObject> nodeList_ = nodeManager.Instance.getNodeList(); //get nodelist from node manager, check if there exists a turret which is at the same level with current selected one
 
@@ -176,51 +189,49 @@ public class UiManager : Singleton<UiManager>
         {
             node no = nodeList_[i].GetComponent<node>();
             
-            if (!no.IsEmpty()&&no.turretToPlace != currentNodeSelected.turretToPlace && no.turretToPlace.turretUpgrade.level == currentNodeSelected.turretToPlace.turretUpgrade.level && currentNodeSelected.turretToPlace.tag== no.turretToPlace.tag)
+            // if nodes are not empty, levels of turrets on the nodes are same and also types are same. Then its time for merge operation 
+            if (!no.IsEmpty()&& no.turretToPlace != currentNodeSelected.turretToPlace && checkIfLevelsMatch(no,currentNodeSelected) && currentNodeSelected.turretToPlace.tag== no.turretToPlace.tag)
             {
+                string whichNodeisThis = nodeManager.Instance.getOrderNumberOfNode(currentNodeSelected).ToString(); //key for level
+               
+                int lev_ = PlayerPrefs.GetInt(whichNodeisThis); // get current level info
+                lev_ += 1; //increase it by one
 
-                currentNodeSelected.turretToPlace.turretUpgrade.upgradeTurret(); // if exists then merge them into one 
+                PlayerPrefs.SetInt(whichNodeisThis, lev_); //set the new level
                 no.destroyTheTurret(); // destroy second one
+
                 break;
             }
         }
 
         closeNodeUiPanel();
 
-
-      
-
-
-
     }
 
-    public void destroyTurret()//onclick
+    public void destroyTurret() //onclick for destroy button
     {
         currentNodeSelected.destroyTheTurret();
         currentNodeSelected = null;
         nodeUiPanel.SetActive(false);
     }
 
-  
-    public node getFirstSelectedNode()
-    {
-        return firstSelectedNode;
-     }
+
     private void nodeSelected(node selectedNode) //event has node reference
     {
-
-        
+ 
         currentNodeSelected = selectedNode;
 
-        if (currentNodeSelected.IsEmpty()) // turret shop panel
+        if (!currentNodeSelected.IsEmpty()) // upgrade destroy panel
         {
-            //turretShopPanel.SetActive(true);
-
-        }
-        else //upgrade-destroy panel
-        {
-            currentNodeSelected.turretToPlace.selected = true;
             showNodeUI();
         }
+
+    }
+
+    public void deleteUserPrefs() //deletes all saved data and restarts the game
+    {
+
+        PlayerPrefs.DeleteAll();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

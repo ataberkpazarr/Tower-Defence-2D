@@ -138,7 +138,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 718392384006378698}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.196, z: 0}
+  m_LocalPosition: {x: 0, y: 0.64, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5818446119294985617}
@@ -207,7 +207,6 @@ GameObject:
   - component: {fileID: 258100507837289165}
   - component: {fileID: 1868073160746230844}
   - component: {fileID: 5485657632691499262}
-  - component: {fileID: 8905181593670024973}
   m_Layer: 0
   m_Name: machineTurret
   m_TagString: machine
@@ -243,7 +242,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fa7bc490e489134d998fb9c3070e7c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 3
+  attackRange: 4
+  damageIncremental: 3
+  this_node: {fileID: 0}
+  DamageIncremental: 0
 --- !u!58 &258100507837289165
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -259,7 +261,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 3
+  m_Radius: 4
 --- !u!114 &1868073160746230844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -287,25 +289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectileSpawnPosition: {fileID: 7023169955209280869}
-  delayBetweenAttacks: 0.2
-  damage: 2
---- !u!114 &8905181593670024973
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2135948411775963472}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b19b30e259cbb4545aedca04520c4656, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  upgradeInitialCost: 0
-  upgradeCostIncremental: 0
-  damageIncremental: 10
-  delayReducer: 0
-  sellPert: 0
+  delayBetweenAttacks: 0.35
 --- !u!1 &3212652470653018389
 GameObject:
   m_ObjectHideFlags: 0
@@ -330,7 +314,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3212652470653018389}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.006, y: 0.736, z: 0}
+  m_LocalPosition: {x: -0.006, y: 1.1800001, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5818446119294985617}

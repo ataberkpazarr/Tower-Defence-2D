@@ -6,65 +6,52 @@ using UnityEngine;
 
 public class node : MonoBehaviour
 {
-    public static Action onTurretDestroyed;
+    public static Action onTurretDestroyed; // fire when a turret is destroyed
     public static Action<node> onNodeSelected; // which node wants to open shop panel
-    public Turret turretToPlace { get; set; }
+    public Turret turretToPlace { get; set; } //turret which exists in this node
 
-    [SerializeField] private GameObject attackRangeSprite;
-    [SerializeField] private Text levelText;
+    [SerializeField] private GameObject attackRangeSprite; //for showing range
+    [SerializeField] private Text levelText; 
 
+    // required for showing turret's range when its clicked
     private float rangeSize;
-    private Vector3 rangeOriginalSize;
+    private Vector3 rangeOriginalSize; 
 
 
 
-    // Start is called before the first frame update
     void Start()
     {
         rangeSize = attackRangeSprite.GetComponent<SpriteRenderer>().bounds.size.y; // reaching its range 
         rangeOriginalSize = attackRangeSprite.transform.localScale;
-        
 
     }
-    /*
-    private void OnGUI()
-    {
-        GUI.Label(new Rect(transform.position.x + 100, transform.position.y + 200, 20, 20), "Level " + turretToPlace.turretUpgrade.level.ToString(), levelStyle);
-
-
-    }*/
-
-    // Update is called once per frame
+   
     void Update()
     {
-        if (turretToPlace != null)
+        if (turretToPlace != null) // if turret is not empty, then update level text which gives level info of the located turret
         {
             try
             {
-                levelText.text  = " Level " + turretToPlace.turretUpgrade.level.ToString();
+                
+               
+                string key_ = nodeManager.Instance.getOrderNumberOfNode(this).ToString();
+                string  lev = PlayerPrefs.GetInt(key_).ToString();
+                levelText.text  = " Level " + lev;
+
             }
             catch 
             {
             
             }
-            
-            
-
-            //updateLevelText
-
         }
-        else if(levelText.gameObject.activeInHierarchy)
+        else if(levelText.gameObject.activeInHierarchy) //if node is empty then set false the level text
         {
             levelText.gameObject.SetActive(false);
         }
 
     }
 
-    private void updateLevelText()
-    {
-    }
-
-    public void setTurret(Turret tur)
+    public void setTurret(Turret tur) //this node, has this turret 
     {
         turretToPlace = tur;
         levelText.gameObject.SetActive(true); // when turret is placed, then we also need to show level text of it
@@ -82,23 +69,21 @@ public class node : MonoBehaviour
         {
             onNodeSelected.Invoke(this); //tell subscribers that this node wants to open the panel
         }
-
-        if (!IsEmpty()) // if this node is node empty
+        
+        if (!IsEmpty()) // if this node is node empty, meaning have a turret
         {
             showTurretInfo();
 
         }
     }
 
-    public void closeThePanel()
-    { }
 
     public void closeAttackRangeSprite()
     {
         attackRangeSprite.SetActive(false);
     }
 
-    private void showTurretInfo()
+    private void showTurretInfo() //when turret clicked, its range will be shown in the game
     {
         attackRangeSprite.SetActive(true);
         attackRangeSprite.transform.localScale = rangeOriginalSize * turretToPlace.AttackRange / (rangeSize/2);
@@ -108,15 +93,30 @@ public class node : MonoBehaviour
     {
         if (!IsEmpty())
         {
-            //currencySystem.Instance.AddCoins(turretToPlace.turretUpgrade.upgradeCost);
+            int whichNodeWeDestroyed = nodeManager.Instance.getOrderNumberOfNode(this); //in which node does the turret, that will be destroyed, placed
+
+          
+            PlayerPrefs.DeleteKey(whichNodeWeDestroyed.ToString()); //delete level key
+            PlayerPrefs.SetInt(whichNodeWeDestroyed.ToString(),1); // set empty node's level to 1 
+          
+
+            if (PlayerPrefs.HasKey(whichNodeWeDestroyed.ToString() + "type")) //delete the type storage of this turret to, which identifies the type, machine, single missile etc..
+            {
+                PlayerPrefs.DeleteKey(whichNodeWeDestroyed.ToString() + "type");
+            }
+
+            //reset and destroy
             Destroy(turretToPlace.gameObject);
             turretToPlace = null;
             attackRangeSprite.SetActive(false);
+
             if (onTurretDestroyed != null)
             {
                 onTurretDestroyed.Invoke();
 
             }
+
+
         }
     }
 

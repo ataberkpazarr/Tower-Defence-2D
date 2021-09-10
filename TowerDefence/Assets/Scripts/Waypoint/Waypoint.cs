@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Waypoint : MonoBehaviour //VEctor 3 positions in space
+public class Waypoint : MonoBehaviour //Vector 3 positions in space
 {
     [SerializeField] private Vector3[] points;
     [SerializeField] private GameObject enemySpawnPos;
@@ -16,7 +16,7 @@ public class Waypoint : MonoBehaviour //VEctor 3 positions in space
 
 
 
-    // Start is called before the first frame update
+
     void Start()
     {
         _gameStarted = true;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class damageTextManager : Singleton<damageTextManager>
+public class damageTextManager : Singleton<damageTextManager> // create a singleton which have a pooler for the damage texts that will be instantiating for per hit to enemy
 {
 
 
